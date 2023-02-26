@@ -1,0 +1,10 @@
+{
+    "files.exclude": {
+        "**/src-tauri": true,
+        "dist": true,
+        "key": true,
+        "node_modules": true,
+        "package.json": true,
+        "yarn.lock": true,
+    }
+}
