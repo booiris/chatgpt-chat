@@ -2,6 +2,7 @@ project_name = app
 passwd = 123456
 
 gen_android:
+	$(shell if [ ! -e out ];then mkdir -p out; fi)
 	cargo tauri android build && cp -a src-tauri/gen/android/$(project_name)/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk ./a.apk && zipalign -f -v 4 a.apk out.apk && echo $(passwd) | apksigner sign --ks ./key/xample.keystore --ks-key-alias publishingdoc out.apk && rm a.apk && rm out.apk.idsig && mv out.apk ./out
 
 get_cmd:

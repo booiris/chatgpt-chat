@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        "**/gen": true,
+        "**/target": true,
+        "**/.cargo": true,
+        "Cargo.lock": true,
+        "build.rs": true,
+    }
+}
