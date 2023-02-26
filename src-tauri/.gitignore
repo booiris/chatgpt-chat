@@ -3,3 +3,4 @@
 /target/
 
 gen/
+.cargo/config.toml
