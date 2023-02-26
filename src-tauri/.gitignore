@@ -4,3 +4,4 @@
 
 gen/
 .cargo/config.toml
+lib/
