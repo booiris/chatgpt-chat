@@ -1,4 +1,10 @@
+use crate::model::errors::Result;
+use crate::{
+    handler::query::QueryHandler,
+    model::interface::{QueryReq, QueryResp},
+};
+
 #[tauri::command]
-pub fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+pub fn query(req: QueryReq) -> Result<QueryResp> {
+    QueryHandler::new(req).handle()
 }

@@ -1,6 +1,11 @@
 use tauri::App;
 
+mod dal;
+mod handler;
 mod js_handler;
+mod model;
+
+use js_handler::*;
 
 #[cfg(mobile)]
 mod mobile;
@@ -31,7 +36,7 @@ impl AppBuilder {
     pub fn run(self) {
         let setup = self.setup;
         tauri::Builder::default()
-            .invoke_handler(tauri::generate_handler![js_handler::greet])
+            .invoke_handler(tauri::generate_handler![query])
             .setup(move |app| {
                 if let Some(setup) = setup {
                     (setup)(app)?;

@@ -18,8 +18,9 @@ tauri-build = { version = "2.0.0-alpha.1", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "2.0.0-alpha.3", features = ["shell-open"] }
-openai-api = { git = "https://github.com/booiris/openai-api-rust.git" }
+openai-api = { git = "https://github.com/booiris/openai-api.git" }
 tokio = { version = "1.25.0", features = ["full"] }
+thiserror = "1.0.38"
 
 [features]
 # by default Tauri runs in production mode
