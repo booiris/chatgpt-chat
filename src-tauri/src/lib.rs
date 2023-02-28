@@ -21,6 +21,7 @@ pub struct AppBuilder {
 
 impl AppBuilder {
     pub fn new() -> Self {
+        dal::init().expect("init env error");
         Self::default()
     }
 

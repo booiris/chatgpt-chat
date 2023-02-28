@@ -19,8 +19,11 @@ serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "2.0.0-alpha.3", features = ["shell-open"] }
 openai-api = { git = "https://github.com/booiris/openai-api.git" }
+# openai-api = { path = "./lib/openai-api" }
 tokio = { version = "1.25.0", features = ["full"] }
 thiserror = "1.0.38"
+once_cell = "1.17.1"
+serde_with = "2.2.0"
 
 [features]
 # by default Tauri runs in production mode

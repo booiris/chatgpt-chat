@@ -7,7 +7,9 @@ const name = ref("");
 
 async function greet() {
   // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-  greetMsg.value = await invoke("greet", { name: name.value });
+  invoke("query", { req: { "text": name.value } }).then(
+    (message) => { console.log(message); greetMsg.value = message["text"] }
+  ).catch((error) => console.error(error));
 }
 </script>
 

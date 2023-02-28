@@ -1,10 +1,11 @@
-use crate::model::errors::Result;
+use crate::dal::openai_api::init::OpenaiApi;
+use crate::model::errors::ResultWarp;
 use crate::{
     handler::query::QueryHandler,
     model::interface::{QueryReq, QueryResp},
 };
 
 #[tauri::command]
-pub fn query(req: QueryReq) -> Result<QueryResp> {
-    QueryHandler::new(req).handle()
+pub async fn query(req: QueryReq) -> ResultWarp<QueryResp> {
+    Ok(QueryHandler::new(req, OpenaiApi::new()).handle().await?)
 }
