@@ -20,7 +20,7 @@ impl QueryHandler {
 
     async fn new_resp(&mut self) -> ResultWarp<QueryResp> {
         Ok(QueryResp {
-            text: self.open_ai_api.query(&self.req.text).await?,
+            text: self.open_ai_api.chat(&self.req.text).await?,
         })
     }
 }
