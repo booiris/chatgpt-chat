@@ -5,3 +5,4 @@
 gen/
 .cargo/config.toml
 lib/
+log/

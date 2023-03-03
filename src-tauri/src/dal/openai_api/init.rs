@@ -8,8 +8,9 @@ use openai_api::{
 static OPENAI_API_CLIENT: OnceCell<Client> = OnceCell::new();
 
 pub fn init_openai_api() -> ResultWarp<()> {
-    let api_token = std::env::var("OPENAI_SK")?;
+    let api_token = std::env::var("OPENAI_SK1")?;
     let client = Client::new(&api_token)?;
+    // let client = Client::new("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")?;
     OPENAI_API_CLIENT.set(client).unwrap();
     Ok(())
 }
