@@ -2,9 +2,23 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 import Greet from "./components/Greet.vue";
+// import { ref } from "vue";
+// import { listen } from '@tauri-apps/api/event'
+// import { invoke } from '@tauri-apps/api/tauri'
+
+// const dir = ref("");
+// async function init_listen() {
+//   await listen("get_dir", (event) => {
+//     console.log(event)
+//     dir.value = event.payload
+//   })
+//   invoke("get_dir")
+// }
+// init_listen()
 </script>
 
 <template>
+
   <div class="container">
     <h1>Welcome to Tauri!</h1>
 
@@ -31,6 +45,10 @@ import Greet from "./components/Greet.vue";
       <a href="https://github.com/tauri-apps/tauri-vscode" target="_blank">Tauri</a>
       +
       <a href="https://github.com/rust-lang/rust-analyzer" target="_blank">rust-analyzer</a>
+    </p>
+
+    <p>
+      {{ dir }}
     </p>
 
     <Greet />

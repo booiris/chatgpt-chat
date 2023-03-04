@@ -101,18 +101,11 @@ impl AppBuilder {
     pub fn run(self) {
         let setup = self.setup;
         tauri::Builder::default()
-            .invoke_handler(tauri::generate_handler![query])
+            .invoke_handler(tauri::generate_handler![query, get_dir])
             .setup(move |app| {
                 if let Err(err) = init(app) {
                     println!("{:?}", err);
                 }
-
-                log::info!("{:?}", app.path_resolver().app_cache_dir());
-                log::info!("{:?}", app.path_resolver().app_config_dir());
-                log::info!("{:?}", app.path_resolver().app_data_dir());
-                log::info!("{:?}", app.path_resolver().app_local_data_dir());
-                log::info!("{:?}", app.path_resolver().resource_dir());
-                log::info!("{:?}", app.path_resolver().app_log_dir());
 
                 if let Some(setup) = setup {
                     (setup)(app)?;
