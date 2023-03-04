@@ -35,7 +35,14 @@ export default defineConfig(async () => {
 
   /** @type {import('vite').UserConfig} */
   const config = {
-    plugins: [vue()],
+    plugins: [vue({
+      template: {
+        compilerOptions: {
+          // treat all tags with a dash as custom elements
+          isCustomElement: (tag) => tag.includes('-')
+        }
+      }
+    })],
     server: {
       host: '0.0.0.0', // listen on all addresses
       port: 5173,

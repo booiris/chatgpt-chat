@@ -1,66 +1,107 @@
 <script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import Greet from "./components/Greet.vue";
-// import { ref } from "vue";
-// import { listen } from '@tauri-apps/api/event'
-// import { invoke } from '@tauri-apps/api/tauri'
+import { register } from 'vue-advanced-chat'
+import { reactive } from 'vue'
+import { invoke } from '@tauri-apps/api/tauri';
+register()
 
-// const dir = ref("");
-// async function init_listen() {
-//   await listen("get_dir", (event) => {
-//     console.log(event)
-//     dir.value = event.payload
-//   })
-//   invoke("get_dir")
-// }
-// init_listen()
+const data = reactive({
+  currentUserId: '1234',
+  rooms: [
+    {
+      roomId: "1",
+      roomName: "First Room",
+      avatar: "https://66.media.tumblr.com/avatar_c6a8eae4303e_512.pnj",
+      users: [
+        { _id: '123', username: 'you' },
+        { _id: '1234', username: 'me' }
+      ]
+    }
+  ],
+  messages: [],
+  messagesLoaded: true,
+  loadingRooms: false,
+  roomsLoaded: true,
+  roomId: null,
+  showFiles: false,
+  showAudio: false,
+  showReactionEmojis: false,
+  roomActions: [
+    // { name: 'inviteUser', title: 'Invite User' },
+    // { name: 'removeUser', title: 'Remove User' },
+    // { name: 'deleteRoom', title: 'Delete Room' }
+  ]
+})
+
+function fetchMessages({ room, options = {} }) {
+  data.messagesLoaded = false
+
+  setTimeout(() => {
+    if (options.reset) {
+      invoke("query", { req: { text: "" } }).then(
+        (message) => {
+          console.log(message);
+          let content = message["text"]
+          let date = new Date(message["time"] * 1000)
+          data.messages = [
+            ...data.messages,
+            {
+              _id: data.messages.length,
+              content: content,
+              senderId: '4321',
+              timestamp: date.toString().substring(16, 21),
+              date: date.toDateString(),
+              disableActions: true,
+              disableReactions: true,
+            }
+          ]
+        }
+      ).catch((error) => console.error(error));
+      data.messagesLoaded = true
+    }
+    data.messagesLoaded = true
+  })
+}
+
+function sendMessage(message) {
+  data.messages = [
+    ...data.messages,
+    {
+      _id: data.messages.length,
+      content: message.content,
+      senderId: data.currentUserId,
+      timestamp: new Date().toString().substring(16, 21),
+      date: new Date().toDateString(),
+      disableActions: true,
+      disableReactions: true,
+    }
+  ]
+  invoke("query", { req: { text: message.content } }).then(
+    (message) => {
+      console.log(message);
+      let content = message["text"]
+      let date = new Date(message["time"] * 1000)
+      data.messages = [
+        ...data.messages,
+        {
+          _id: data.messages.length,
+          content: content,
+          senderId: '4321',
+          timestamp: date.toString().substring(16, 21),
+          date: date.toDateString(),
+          disableActions: true,
+          disableReactions: true,
+        }
+      ]
+    }
+  ).catch((error) => console.error(error));
+}
+
 </script>
 
 <template>
-
-  <div class="container">
-    <h1>Welcome to Tauri!</h1>
-
-    <div class="row">
-      <a href="https://vitejs.dev" target="_blank">
-        <img src="/vite.svg" class="logo vite" alt="Vite logo" />
-      </a>
-      <a href="https://tauri.app" target="_blank">
-        <img src="/tauri.svg" class="logo tauri" alt="Tauri logo" />
-      </a>
-      <a href="https://vuejs.org/" target="_blank">
-        <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-      </a>
-    </div>
-
-    <p>Click on the Tauriasdasdss, Vite, and Vue logos to learn more.</p>
-
-    <p>
-      Recommended IDE setup:
-      <a href="https://code.visualstudio.com/" target="_blank">VS Code</a>
-      +
-      <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
-      +
-      <a href="https://github.com/tauri-apps/tauri-vscode" target="_blank">Tauri</a>
-      +
-      <a href="https://github.com/rust-lang/rust-analyzer" target="_blank">rust-analyzer</a>
-    </p>
-
-    <p>
-      {{ dir }}
-    </p>
-
-    <Greet />
-  </div>
+  <vue-advanced-chat height="calc(100vh - 20px)" :current-user-id=data.currentUserId .rooms="data.rooms"
+    .messages="data.messages" .room-actions="data.roomActions" .loading-rooms="data.loadingRooms"
+    .rooms-loaded="data.roomsLoaded" .messages-loaded="data.messagesLoaded" .rood-id="data.roomId"
+    .show-files="data.showFiles" .show-audio="data.showAudio" .show-reaction-emojis="data.showReactionEmojis"
+    @send-message="sendMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])" />
 </template>
-
-<style scoped>
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #249b73);
-}
-</style>

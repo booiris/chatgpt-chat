@@ -74,8 +74,10 @@ impl OpenaiApi {
             Some(client) => client,
             None => return Err(Error::Any("OpenaiApi client not initialized".to_string())),
         };
-        self.chat_history
-            .push(ChatFormat::new(ChatRole::User, content.to_string()));
+        if content != "" {
+            self.chat_history
+                .push(ChatFormat::new(ChatRole::User, content.to_string()));
+        }
         match client
             .chat(self.chat_args.messages(self.chat_history.clone()).build()?) // TODO: clone is not good
             .await

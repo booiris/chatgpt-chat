@@ -9,7 +9,10 @@ use crate::{
 
 #[tauri::command]
 pub async fn query(req: QueryReq) -> ResultWarp<QueryResp> {
-    Ok(QueryHandler::new(req, OpenaiApi::new()).handle().await?)
+    let mut resp = QueryHandler::new(req, OpenaiApi::new()).handle().await?;
+    let now = chrono::Utc::now().timestamp();
+    resp.time = now;
+    Ok(resp)
 }
 
 #[tauri::command]

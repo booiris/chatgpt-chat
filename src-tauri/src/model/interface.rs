@@ -17,4 +17,5 @@ fn query_req_test() {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct QueryResp {
     pub text: String,
+    pub time: i64
 }
