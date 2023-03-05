@@ -1,9 +1,16 @@
+<script>
+export let debug_msg_data = []
+</script>
+
 <script setup>
 import { register } from 'vue-advanced-chat'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri';
-register()
+import { emit, listen } from '@tauri-apps/api/event'
 
+const debug_msg = ref(debug_msg_data)
+
+register()
 const data = reactive({
   currentUserId: '1234',
   rooms: [
@@ -55,7 +62,7 @@ function fetchMessages({ room, options = {} }) {
             }
           ]
         }
-      ).catch((error) => console.error(error));
+      ).catch((error) => { console.error(error), debug_msg.value.push(error) });
       data.messagesLoaded = true
     }
     data.messagesLoaded = true
@@ -93,7 +100,7 @@ function sendMessage(message) {
         }
       ]
     }
-  ).catch((error) => console.error(error));
+  ).catch((error) => { console.error(error), debug_msg.value.push(error) });
 }
 
 </script>
@@ -104,4 +111,7 @@ function sendMessage(message) {
     .rooms-loaded="data.roomsLoaded" .messages-loaded="data.messagesLoaded" .rood-id="data.roomId"
     .show-files="data.showFiles" .show-audio="data.showAudio" .show-reaction-emojis="data.showReactionEmojis"
     @send-message="sendMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])" />
+  <li v-for="msg in debug_msg">
+    {{ msg }}
+  </li>
 </template>

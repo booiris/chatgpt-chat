@@ -16,6 +16,17 @@ pub async fn query(req: QueryReq) -> ResultWarp<QueryResp> {
 }
 
 #[tauri::command]
+pub fn init_backend(app_handle: tauri::AppHandle) {
+    if let Err(err) = crate::init(app_handle) {
+        println!("{:?}", err);
+        crate::dal::debug_print::init::debug_print(&format!("{:?}", err));
+    } else {
+        log::info!("init_backend success");
+        crate::dal::debug_print::init::debug_print("init_backend success");
+    }
+}
+
+#[tauri::command]
 pub fn get_dir(app_handle: tauri::AppHandle) {
     let mut a = std::collections::HashMap::<String, String>::new();
     a.insert(

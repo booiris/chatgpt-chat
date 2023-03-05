@@ -9,7 +9,7 @@ use log4rs::{
     encode::pattern::PatternEncoder,
     Config,
 };
-use tauri::App;
+use tauri::{App, AppHandle};
 
 mod dal;
 mod handler;
@@ -65,14 +65,15 @@ fn init_log(log_dir: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn init(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
+fn init(app: AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     panic::set_hook(Box::new(move |panic_info| {
         error!("{:?}", panic_info);
     }));
     match app.path_resolver().app_log_dir() {
         Some(log_dir) => init_log(log_dir)?,
         _ => {
-            return Err("log dir not found".into());
+            // return Err("log dir not found".into());
+            crate::dal::debug_print::init::debug_print("log dir not found");
         }
     }
     init_dal()?;
@@ -101,10 +102,14 @@ impl AppBuilder {
     pub fn run(self) {
         let setup = self.setup;
         tauri::Builder::default()
-            .invoke_handler(tauri::generate_handler![query, get_dir])
+            .invoke_handler(tauri::generate_handler![query, get_dir, init_backend])
             .setup(move |app| {
-                if let Err(err) = init(app) {
-                    println!("{:?}", err);
+                {
+                    use dal::debug_print::init::init_debug_print;
+                    let app_handler = app.handle();
+                    std::thread::spawn(move || {
+                        init_debug_print(app_handler);
+                    });
                 }
 
                 if let Some(setup) = setup {
