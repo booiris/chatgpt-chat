@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import "./style.css";
+// import "./style.css";
 import App from "./App.vue";
 
 import { debug_msg_data } from "./App.vue";
@@ -10,8 +10,9 @@ async function init_listen() {
         console.log(event)
         debug_msg_data.push(event.payload)
     })
-    invoke("init_backend")
+    await invoke("init_backend")
 }
 init_listen().then(() => { createApp(App).mount("#app"); })
+// createApp(App).mount("#app");
 
 

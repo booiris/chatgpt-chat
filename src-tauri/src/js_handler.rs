@@ -9,15 +9,12 @@ use crate::{
 
 #[tauri::command]
 pub async fn query(req: QueryReq) -> ResultWarp<QueryResp> {
-    let mut resp = QueryHandler::new(req, OpenaiApi::new()).handle().await?;
-    let now = chrono::Utc::now().timestamp();
-    resp.time = now;
-    Ok(resp)
+    Ok(QueryHandler::new(req, OpenaiApi::new()).handle().await?)
 }
 
 #[tauri::command]
-pub fn init_backend(app_handle: tauri::AppHandle) {
-    if let Err(err) = crate::init(app_handle) {
+pub async fn init_backend(app_handle: tauri::AppHandle) {
+    if let Err(err) = crate::init(app_handle).await {
         println!("{:?}", err);
         crate::dal::debug_print::init::debug_print(&format!("{:?}", err));
     } else {

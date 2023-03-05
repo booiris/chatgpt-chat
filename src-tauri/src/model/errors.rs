@@ -15,4 +15,6 @@ pub enum Error {
     CompletionArgsBuilderError(#[from] openai_api::api::CompletionArgsBuilderError),
     #[error("ChatArgsBuilderError Error: {0}")]
     ChatArgsBuilderError(#[from] openai_api::api::ChatArgsBuilderError),
+    #[error("MongoDBError Error: {0}")]
+    MongoDBError(#[from] mongodb::error::Error),
 }

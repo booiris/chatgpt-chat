@@ -1,4 +1,7 @@
-use crate::model::errors::{Error, ResultWarp};
+use crate::{
+    dal::mongodb::init::MongoDBClient,
+    model::errors::{Error, ResultWarp},
+};
 use once_cell::sync::OnceCell;
 use openai_api::{
     api::{ChatArgs, ChatArgsBuilder, ChatFormat, ChatRole, CompletionArgs, CompletionArgsBuilder},
@@ -10,7 +13,7 @@ static OPENAI_API_CLIENT: OnceCell<Client> = OnceCell::new();
 pub fn init_openai_api() -> ResultWarp<()> {
     // let api_token = std::env::var("OPENAI_SK1")?;
     // let client = Client::new(&api_token)?;
-    let client = Client::new("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")?;
+    let client = Client::new("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")?;
     OPENAI_API_CLIENT.set(client).unwrap();
     Ok(())
 }
@@ -21,6 +24,7 @@ pub struct OpenaiApi {
     chat_args: ChatArgsBuilder,
     context: String,
     chat_history: Vec<ChatFormat>,
+    mongo_db: MongoDBClient,
 }
 
 impl OpenaiApi {
@@ -43,6 +47,7 @@ impl OpenaiApi {
             chat_args,
             context,
             chat_history,
+            mongo_db: MongoDBClient::new(),
         }
     }
 }
@@ -67,13 +72,12 @@ impl OpenaiApi {
         }
     }
 
-    pub async fn chat(&mut self, content: &str) -> ResultWarp<String> {
+    pub async fn chat(&mut self, content: &str) -> ResultWarp<(String, i64)> {
         let client = OPENAI_API_CLIENT
             .get()
             .ok_or(Error::Any("OpenaiApi client not initialized".to_string()))?;
         if content != "" {
-            self.chat_history
-                .push(ChatFormat::new(ChatRole::User, content.to_string()));
+            self.insert_msg(ChatRole::User, content.to_string()).await?;
         }
         match client
             .chat(self.chat_args.messages(self.chat_history.clone()).build()?) // TODO: clone is not good
@@ -81,11 +85,20 @@ impl OpenaiApi {
         {
             Ok(answer) => {
                 let answer = &answer.choices[0].message;
-                self.chat_history
-                    .push(ChatFormat::new(ChatRole::Assistant, answer.to_string()));
-                Ok(answer.content.trim().to_owned())
+                let time = self
+                    .insert_msg(ChatRole::Assistant, answer.to_string())
+                    .await?;
+                Ok((answer.content.trim().to_owned(), time))
             }
             Err(e) => Err(e.into()),
         }
+    }
+
+    async fn insert_msg(&mut self, role: ChatRole, content: String) -> ResultWarp<i64> {
+        self.chat_history
+            .push(ChatFormat::new(role.clone(), content.clone()));
+        let time = chrono::Utc::now().timestamp();
+        MongoDBClient::insert_one_msg(0, 1, role, content, time).await?;
+        Ok(time)
     }
 }

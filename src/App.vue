@@ -36,7 +36,23 @@ const data = reactive({
     // { name: 'inviteUser', title: 'Invite User' },
     // { name: 'removeUser', title: 'Remove User' },
     // { name: 'deleteRoom', title: 'Delete Room' }
-  ]
+  ],
+  styles: {
+    general: {
+      color: '#bbbbbb',
+      colorSpinner: '#333',
+      borderStyle: '1px solid #e1e4e8'
+    },
+
+    footer: {
+      background: '#f8f9fa',
+      backgroundReply: 'rgba(0, 0, 0, 0.08)'
+    },
+
+    icons: {
+      search: '#9ca6af'
+    }
+  }
 })
 
 function fetchMessages({ room, options = {} }) {
@@ -107,9 +123,9 @@ function sendMessage(message) {
 
 <template>
   <vue-advanced-chat height="calc(100vh - 20px)" :current-user-id=data.currentUserId .rooms="data.rooms"
-    .messages="data.messages" .room-actions="data.roomActions" .loading-rooms="data.loadingRooms"
-    .rooms-loaded="data.roomsLoaded" .messages-loaded="data.messagesLoaded" .rood-id="data.roomId"
-    .show-files="data.showFiles" .show-audio="data.showAudio" .show-reaction-emojis="data.showReactionEmojis"
+    .messages="data.messages" .loading-rooms="data.loadingRooms" .rooms-loaded="data.roomsLoaded"
+    .messages-loaded="data.messagesLoaded" .rood-id="data.roomId" .show-files="data.showFiles"
+    .show-audio="data.showAudio" .show-reaction-emojis="data.showReactionEmojis" .styles="data.styles"
     @send-message="sendMessage($event.detail[0])" @fetch-messages="fetchMessages($event.detail[0])" />
   <li v-for="msg in debug_msg">
     {{ msg }}

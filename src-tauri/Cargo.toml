@@ -28,6 +28,7 @@ serde_with = "2.2.0"
 log = "0.4.17"
 log4rs = "1.2.0"
 chrono = "0.4.23"
+mongodb = { version = "2.4.0" }
 
 [features]
 # by default Tauri runs in production mode

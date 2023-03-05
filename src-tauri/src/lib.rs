@@ -65,18 +65,17 @@ fn init_log(log_dir: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn init(app: AppHandle) -> Result<(), Box<dyn std::error::Error>> {
+async fn init(app: AppHandle) -> Result<(), Box<dyn std::error::Error>> {
     panic::set_hook(Box::new(move |panic_info| {
         error!("{:?}", panic_info);
     }));
     match app.path_resolver().app_log_dir() {
         Some(log_dir) => init_log(log_dir)?,
         _ => {
-            // return Err("log dir not found".into());
             crate::dal::debug_print::init::debug_print("log dir not found");
         }
     }
-    init_dal()?;
+    init_dal().await?;
     Ok(())
 }
 
