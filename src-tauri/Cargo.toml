@@ -11,6 +11,9 @@ edition = "2021"
 [lib]
 crate-type = ["staticlib", "cdylib", "rlib"]
 
+[profile.dev.package.sqlx-macros]
+opt-level = 3
+
 [build-dependencies]
 tauri-build = { version = "2.0.0-alpha.1", features = [] }
 
@@ -28,7 +31,7 @@ serde_with = "2.2.0"
 log = "0.4.17"
 log4rs = "1.2.0"
 chrono = "0.4.23"
-mongodb = { version = "2.4.0" }
+sqlx = { version = "^0.6", features = ["runtime-tokio-rustls", "mysql"] }
 
 [features]
 # by default Tauri runs in production mode

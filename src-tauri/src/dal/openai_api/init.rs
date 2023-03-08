@@ -1,5 +1,5 @@
 use crate::{
-    dal::mongodb::init::MongoDBClient,
+    dal::mysql::init::MysqlClient,
     model::errors::{Error, ResultWarp},
 };
 use once_cell::sync::OnceCell;
@@ -13,7 +13,7 @@ static OPENAI_API_CLIENT: OnceCell<Client> = OnceCell::new();
 pub fn init_openai_api() -> ResultWarp<()> {
     // let api_token = std::env::var("OPENAI_SK1")?;
     // let client = Client::new(&api_token)?;
-    let client = Client::new("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")?;
+    let client = Client::new("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")?;
     OPENAI_API_CLIENT.set(client).unwrap();
     Ok(())
 }
@@ -24,7 +24,7 @@ pub struct OpenaiApi {
     chat_args: ChatArgsBuilder,
     context: String,
     chat_history: Vec<ChatFormat>,
-    mongo_db: MongoDBClient,
+    mysql_db: MysqlClient,
 }
 
 impl OpenaiApi {
@@ -47,7 +47,7 @@ impl OpenaiApi {
             chat_args,
             context,
             chat_history,
-            mongo_db: MongoDBClient::new(),
+            mysql_db: MysqlClient::new(),
         }
     }
 }
@@ -98,7 +98,9 @@ impl OpenaiApi {
         self.chat_history
             .push(ChatFormat::new(role.clone(), content.clone()));
         let time = chrono::Utc::now().timestamp();
-        MongoDBClient::insert_one_msg(0, 1, role, content, time).await?;
+        self.mysql_db
+            .insert_one_msg(0, 1, role, content, time)
+            .await?;
         Ok(time)
     }
 }
